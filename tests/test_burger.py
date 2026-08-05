@@ -23,8 +23,10 @@ def make_ingredient(ingredient_type, name, price):
 
 
 class TestBurger:
-    def test_new_burger_has_no_bun_and_ingredients(self, burger):
+    def test_new_burger_has_no_bun(self, burger):
         assert burger.bun is None
+
+    def test_new_burger_has_no_ingredients(self, burger):
         assert burger.ingredients == []
 
     def test_set_buns_sets_bun(self, burger):
@@ -60,6 +62,10 @@ class TestBurger:
 
         assert burger.ingredients == expected_ingredients
 
+    def test_remove_ingredient_with_invalid_index_raises_error(self, burger):
+        with pytest.raises(IndexError):
+            burger.remove_ingredient(0)
+
     @pytest.mark.parametrize(
         'index, new_index, expected_ingredients',
         [
@@ -80,6 +86,12 @@ class TestBurger:
 
         assert burger.ingredients == expected_ingredients
 
+    def test_move_ingredient_with_invalid_index_raises_error(self, burger):
+        burger.ingredients = ['first']
+
+        with pytest.raises(IndexError):
+            burger.move_ingredient(1, 0)
+
     def test_get_price_returns_price_of_two_buns_and_ingredients(self, burger):
         bun = make_bun(price=100)
         sauce = make_ingredient(INGREDIENT_TYPE_SAUCE, 'Соус', 50)
@@ -89,6 +101,10 @@ class TestBurger:
         burger.add_ingredient(filling)
 
         assert burger.get_price() == 325
+
+    def test_get_price_without_bun_raises_error(self, burger):
+        with pytest.raises(AttributeError):
+            burger.get_price()
 
     def test_get_receipt_returns_formatted_receipt(self, burger):
         bun = make_bun(name='Краторная булка', price=100)
@@ -107,3 +123,7 @@ class TestBurger:
         )
 
         assert burger.get_receipt() == expected_receipt
+
+    def test_get_receipt_without_bun_raises_error(self, burger):
+        with pytest.raises(AttributeError):
+            burger.get_receipt()
